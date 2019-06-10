@@ -27,14 +27,7 @@ jobs:
       artifactName: "build_archive"
       targetPath: .
 
-  - script: /root/scripts/azure-test.sh
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testRunner: "JUnit"
-      testResultsFiles: "build/results/*.xml"
-      mergeTestResults: true
+  - script: /root/scripts/azure-lint.sh
 
 - job: Test
   pool:
