@@ -13,6 +13,29 @@ jobs:
       artifactName: "build_archive"
       targetPath: ./build.tar.gz
 
+- job: Lint
+  pool:
+    vmImage: ubuntu-16.04
+  container:
+    image: angr/ci:1
+    options: --cap-add=SYS_PTRACE
+  dependsOn: Build
+  condition: succeeded()
+  steps:
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: "build_archive"
+      targetPath: .
+
+  - script: /root/scripts/azure-test.sh
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testRunner: "JUnit"
+      testResultsFiles: "build/results/*.xml"
+      mergeTestResults: true
+
 - job: Test
   pool:
     vmImage: ubuntu-16.04
